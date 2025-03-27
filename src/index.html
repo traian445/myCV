@@ -1,19 +1,25 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>WebSite Building Bootstrap + Webpack</title>
-  </head>
+</head>
 
-  <body>
-    <%= htmlWebpackPlugin.options.myHeader %> <%=
-    htmlWebpackPlugin.options.myBanner %>
-    <main id="main">
-      <%= htmlWebpackPlugin.options.myAbout %> <%=
-      htmlWebpackPlugin.options.myContact %>
-    </main>
+<body>
+    <%= htmlWebpackPlugin.options.myHeader %>
+        <%= htmlWebpackPlugin.options.myBanner %>
+            <main id="main">
+                <%= htmlWebpackPlugin.options.myAbout %>
+                    <%= htmlWebpackPlugin.options.myExperience %>
+                        <%= htmlWebpackPlugin.options.myPortfolio %>
+                            <%= htmlWebpackPlugin.options.myContact %>
 
-    <%= htmlWebpackPlugin.options.myFooter %>
-  </body>
+            </main>
+
+            <%= htmlWebpackPlugin.options.myFooter %>
+
+</body>
+
 </html>

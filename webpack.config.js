@@ -6,16 +6,22 @@ const autoprefixer = require('autoprefixer')
 const HtmlWebpackPlugin = require('html-webpack-plugin')
 const miniCssExtractPlugin = require('mini-css-extract-plugin')
 const CopyWebpackPlugin = require('copy-webpack-plugin');
+
+// Define source and output paths
 const paths = {
-    /* Path to source files directory */
     source: path.resolve(__dirname, './src/'),
-    /* Path to built files directory */
     output: path.resolve(__dirname, './dist/'),
 };
-const favicon = path.resolve(paths.source, 'images', 'favicon.ico');
+
+// Paths for static assets
+const favicon = path.resolve(paths.source + '/src/images/favicon.ico');
 const myHeader = fs.readFileSync(paths.source + '/views/header.html');
 const myBanner = fs.readFileSync(paths.source + '/views/banner.html');
+const myAbout = fs.readFileSync(paths.source + '/views/about.html');
+const myPort = fs.readFileSync(paths.source + '/views/portfolio.html');
+const myContact = fs.readFileSync(paths.source + '/views/contact.html');
 const myFooter = fs.readFileSync(paths.source + '/views/footer.html');
+
 module.exports = {
     stats: {
         errorDetails: true,
@@ -26,18 +32,21 @@ module.exports = {
     output: {
         filename: 'assets/js/main.bundle.js',
         path: paths.output,
-        clean: true, // strege folderul dist inainte sa genereze altul
+        clean: true, // Clean dist folder before generating new build
     },
     plugins: [
         new HtmlWebpackPlugin({
             hash: true,
             favicon: favicon,
-            myHeader: myHeader,
-            myBanner: myBanner,
-            myFooter: myFooter,
             template: './src/index.html',
             filename: 'index.html',
-            inject: 'body'
+            inject: 'body',
+            // Passing custom variables to HTML template
+            templateParameters: {
+                myHeader: myHeader,
+                myBanner: myBanner,
+                myFooter: myFooter,
+            }
         }),
         new miniCssExtractPlugin({
             filename: 'assets/css/main.css'
@@ -52,59 +61,32 @@ module.exports = {
                         ignore: ['*.DS_Store', 'Thumbs.db'],
                     },
                 },
-                // {
-                //     from: path.resolve(paths.source, 'videos'),
-                //     to: path.resolve(paths.output, 'videos'),
-                //     toType: 'dir',
-                //     globOptions: {
-                //         ignore: ['*.DS_Store', 'Thumbs.db'],
-                //     },
-                // },
             ],
         }),
     ],
     module: {
         rules: [
             {
-                mimetype: 'image/svg+xml',
-                scheme: 'data',
-                type: 'asset/resource',
-                generator: {
-                    filename: 'assets/icons/[hash].svg'
-                }
-            },
-            {
                 test: /\.woff($|\?)|\.woff2($|\?)|\.ttf($|\?)|\.eot($|\?)|\.svg($|\?)/i,
                 type: 'asset/resource',
                 generator: {
-                    //filename: 'fonts/[name]-[hash][ext][query]'
                     filename: 'assets/fonts/[name][ext][query]'
                 }
             },
             {
-                test: /\.(scss)$/,
+                test: /\.(scss)$/i,
                 use: [
+                    miniCssExtractPlugin.loader,
+                    'css-loader',
                     {
-                        // Extracts CSS for each JS file that includes CSS
-                        loader: miniCssExtractPlugin.loader
-                    },
-                    {
-                        // Interprets `@import` and `url()` like `import/require()` and will resolve them
-                        loader: 'css-loader'
-                    },
-                    {
-                        // Loader for webpack to process CSS with PostCSS
                         loader: 'postcss-loader',
                         options: {
                             postcssOptions: {
-                                plugins: [
-                                    autoprefixer
-                                ]
+                                plugins: [autoprefixer]
                             }
                         }
                     },
                     {
-                        // Loads a SASS/SCSS file and compiles it to CSS
                         loader: 'sass-loader',
                         options: {
                             sassOptions: {
@@ -115,23 +97,22 @@ module.exports = {
                 ]
             },
             {
-                test: /\.json$/,
+                test: /\.json$/i,
                 type: 'json'
             },
             {
-                test: /\.(jpe?g|png|webp)$/,
+                test: /\.(jpe?g|png|webp)$/i,
                 type: 'asset/resource',
                 generator: {
                     filename: './assets/images/[name].[hash:6][ext]',
                 },
             },
             {
-                test: /\.(js|ts)$/,
+                test: /\.(js|ts)$/i,
                 loader: 'babel-loader',
-                exclude: '/node_modules/'
+                exclude: /node_modules/
             },
-
         ]
     },
-    performance: { hints: false, maxAssetSize: 100000, }
+    performance: { hints: false, maxAssetSize: 100000 }
 }
